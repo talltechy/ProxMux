@@ -1,3 +1,51 @@
+
+## 🆕 Script Refactoring & Usage
+
+All major scripts have been refactored for:
+- Maintainability (functions, arrays, modular logic)
+- Performance (parallelizable steps, reduced redundancy)
+- Security (input validation, error handling, minimal privilege)
+
+### Updated Usage Examples
+
+#### install-packages.sh
+- Uses arrays for package lists and functions for error handling.
+- Network connectivity is checked before installation.
+- Usage:
+```bash
+sudo ./scripts/install-packages.sh
+```
+
+#### hardware-sensors.sh
+- Modular functions for safe command execution and error handling.
+- Usage:
+```bash
+sudo ./scripts/hardware-sensors.sh [--brief]
+```
+
+#### apply-configs.sh
+- Functions for backup, validation, and copying configs/scripts.
+- Usage:
+```bash
+sudo ./scripts/apply-configs.sh
+```
+
+#### pve-tmux.sh
+- Session/window names are now variables; old sessions are cleaned up automatically.
+- Usage:
+```bash
+pve-monitor
+```
+
+### Security Improvements
+- All scripts use `set -euo pipefail` for safer execution.
+- Consistent error handling and input validation throughout.
+- Sudoers configuration is validated before applying.
+- Minimal privilege principle enforced in all scripts.
+
+---
+
+For details, see comments in each script and the security guide.
 # ProxMux
 
 **A comprehensive configuration package for Oh My Zsh and tmux, specifically optimized for Proxmox VE hosts.**
