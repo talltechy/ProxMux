@@ -27,24 +27,23 @@ if [[ ! $REPLY =~ ^[Yy]$ ]]; then
     exit 0
 fi
 
-# Get script directory
+# Get script directory and source common functions
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/scripts/common-functions.sh"
 
 echo "📦 Step 1: Installing packages..."
-if [[ -x "$SCRIPT_DIR/install-packages.sh" ]]; then
-    "$SCRIPT_DIR/install-packages.sh"
+if [[ -x "$SCRIPT_DIR/scripts/install-packages.sh" ]]; then
+    "$SCRIPT_DIR/scripts/install-packages.sh"
 else
-    echo "❌ Error: install-packages.sh not found or not executable"
-    exit 1
+    error_exit "install-packages.sh not found or not executable"
 fi
 
 echo ""
 echo "📝 Step 2: Applying configurations..."
-if [[ -x "$SCRIPT_DIR/apply-configs.sh" ]]; then
-    "$SCRIPT_DIR/apply-configs.sh"
+if [[ -x "$SCRIPT_DIR/scripts/apply-configs.sh" ]]; then
+    "$SCRIPT_DIR/scripts/apply-configs.sh"
 else
-    echo "❌ Error: apply-configs.sh not found or not executable"
-    exit 1
+    error_exit "apply-configs.sh not found or not executable"
 fi
 
 echo ""
@@ -65,10 +64,10 @@ else
 fi
 
 # Test scripts
-if [[ -x "/root/bin/dell-sensors.sh" ]]; then
-    echo "✅ dell-sensors.sh installed"
+if [[ -x "/root/bin/hardware-sensors.sh" ]]; then
+    echo "✅ hardware-sensors.sh installed"
 else
-    echo "⚠️  dell-sensors.sh not found"
+    echo "⚠️  hardware-sensors.sh not found"
 fi
 
 if [[ -x "/root/bin/pve-tmux.sh" ]]; then
@@ -83,13 +82,13 @@ echo ""
 echo "📋 Next Steps:"
 echo "  1. Start new shell: zsh"
 echo "  2. Test monitoring: pve-monitor"  
-echo "  3. Check hardware: dellstatus"
+echo "  3. Check hardware: hardwarestatus"
 echo "  4. Read security guide: cat security/SECURITY.md"
 echo ""
 echo "🔧 Key Commands:"
 echo "  • pve-monitor     - Start monitoring session"
 echo "  • qmls, ctls      - List VMs/containers"
-echo "  • dellstatus      - Hardware status"
+echo "  • hardwarestatus  - Hardware status"
 echo "  • vminfo <id>     - VM details"
 echo "  • ctinfo <id>     - Container details"
 echo ""
