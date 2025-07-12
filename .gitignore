@@ -17,6 +17,7 @@ logs/
 *.temp
 .tmp/
 temp/
+memory-bank/
 
 # SSH keys and sensitive data
 *.pem
