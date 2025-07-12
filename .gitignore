@@ -84,3 +84,4 @@ _site/
 notes.txt
 todo.txt
 README.local.md
+*.code-workspace
