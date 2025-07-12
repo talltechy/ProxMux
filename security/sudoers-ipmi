@@ -1,0 +1,37 @@
+# SECURITY-RESTRICTED Sudoers configuration for IPMI access
+# Allows specific IPMI commands without password for monitoring purposes
+# 
+# SECURITY NOTE: This configuration grants hardware-level access
+# Review and audit regularly for security compliance
+
+# Allow root user to execute specific IPMI commands without password
+# Temperature monitoring (read-only, safe)
+root ALL=(ALL) NOPASSWD: /usr/bin/ipmitool sdr type temperature
+
+# Fan status monitoring (read-only, safe)  
+root ALL=(ALL) NOPASSWD: /usr/bin/ipmitool sdr type fan
+
+# Power/current monitoring (read-only, safe)
+root ALL=(ALL) NOPASSWD: /usr/bin/ipmitool sdr type current
+
+# System event log access (read-only, limited)
+root ALL=(ALL) NOPASSWD: /usr/bin/ipmitool sel list last *
+
+# Basic chassis status (read-only, safe)
+root ALL=(ALL) NOPASSWD: /usr/bin/ipmitool chassis status
+
+# SDR list access (read-only, safe)
+root ALL=(ALL) NOPASSWD: /usr/bin/ipmitool sdr list
+
+# SECURITY RESTRICTIONS:
+# - Only specific read-only IPMI commands allowed
+# - No chassis control commands (power, reset, etc.)
+# - No BMC configuration changes
+# - No user management commands
+# - No firmware update commands
+# - Limited to monitoring functions only
+
+# Additional security user example (uncomment and modify as needed):
+# pveadmin ALL=(ALL) NOPASSWD: /usr/bin/ipmitool sdr type temperature
+# pveadmin ALL=(ALL) NOPASSWD: /usr/bin/ipmitool sdr type fan
+# pveadmin ALL=(ALL) NOPASSWD: /usr/bin/ipmitool sdr type current

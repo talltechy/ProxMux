@@ -1,0 +1,86 @@
+# ProxMux .gitignore
+
+# Backup files
+*.backup
+*.bak
+*.orig
+*~
+.#*
+
+# Log files
+*.log
+logs/
+*.out
+
+# Temporary files
+*.tmp
+*.temp
+.tmp/
+temp/
+
+# SSH keys and sensitive data
+*.pem
+*.key
+id_rsa*
+id_ed25519*
+*.pub
+authorized_keys*
+
+# Configuration backups
+.zshrc.backup*
+.tmux.conf.backup*
+config.backup
+
+# tmux session files
+.tmux-*
+tmux-server-*
+
+# Oh My Zsh cache
+.oh-my-zsh/cache/
+.zcompdump*
+
+# System files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE/Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Package management
+node_modules/
+*.deb
+*.rpm
+
+# Compressed files
+*.zip
+*.tar.gz
+*.tar.bz2
+*.7z
+
+# Local environment files
+.env
+.env.local
+.env.*.local
+
+# Test directories
+test/
+tests/
+tmp/
+
+# Documentation builds
+_site/
+.jekyll-cache/
+
+# Personal notes
+notes.txt
+todo.txt
+README.local.md
