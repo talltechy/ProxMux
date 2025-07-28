@@ -1,0 +1,271 @@
+# macOS Oh My Zsh Configuration
+# Based on ProxMux security-first patterns adapted for macOS development
+
+# Oh My Zsh Configuration
+export ZSH="$HOME/.oh-my-zsh"
+
+# Theme
+ZSH_THEME="powerlevel10k/powerlevel10k"
+
+# Plugins
+plugins=(
+    git
+    zsh-autosuggestions
+    zsh-syntax-highlighting
+    zsh-completions
+    brew
+    node
+    npm
+    python
+    # Enhanced iTerm2 & navigation
+    iterm2
+    colored-man-pages
+    z
+    copypath
+)
+
+# Security settings
+HISTSIZE=1000
+SAVEHIST=1000
+setopt HIST_IGNORE_DUPS
+setopt HIST_IGNORE_ALL_DUPS
+setopt HIST_IGNORE_SPACE
+setopt HIST_SAVE_NO_DUPS
+
+# Load Oh My Zsh
+source $ZSH/oh-my-zsh.sh
+
+# Load development functions
+if [[ -f "$HOME/.local/lib/dev-functions.sh" ]]; then
+    source "$HOME/.local/lib/dev-functions.sh"
+fi
+
+# PATH configuration
+export PATH="$HOME/.local/bin:$PATH"
+
+# Development aliases
+alias ll='exa -la --git'
+alias ls='exa'
+alias cat='bat'
+alias grep='rg'
+alias find='fd'
+
+# Git aliases (with input validation)
+alias gst='git status --short'
+alias gaa='git add .'
+alias gp='git push'
+alias gl='git pull'
+alias gb='git branch'
+alias gco='git checkout'
+
+# Safe git commit with message validation
+gcm() {
+    local message="$1"
+    if [[ -z "$message" ]]; then
+        echo "❌ Usage: gcm <commit-message>"
+        return 1
+    fi
+    if [[ ${#message} -lt 10 ]]; then
+        echo "❌ Commit message too short (minimum 10 characters)"
+        return 1
+    fi
+    git commit -m "$message"
+}
+
+# Python project creation
+mkpyproject() {
+    local name="$1"
+    if [[ -z "$name" ]]; then
+        echo "❌ Usage: mkpyproject <project-name>"
+        return 1
+    fi
+    
+    # Validate project name
+    if [[ ! "$name" =~ ^[a-zA-Z0-9_-]+$ ]]; then
+        echo "❌ Project name can only contain letters, numbers, hyphens, and underscores"
+        return 1
+    fi
+    
+    local project_dir="$HOME/Projects/$name"
+    if [[ -d "$project_dir" ]]; then
+        echo "❌ Project already exists: $project_dir"
+        return 1
+    fi
+    
+    echo "🐍 Creating Python project: $name"
+    mkdir -p "$project_dir"
+    cd "$project_dir"
+    
+    # Create basic Python project structure
+    mkdir -p src tests docs
+    
+    # Create virtual environment
+    python3 -m venv venv
+    source venv/bin/activate
+    
+    # Create basic files
+    cat > README.md << EOF
+# $name
+
+A Python project created with mkpyproject.
+
+## Setup
+
+\`\`\`bash
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+\`\`\`
+
+## Usage
+
+\`\`\`bash
+python src/main.py
+\`\`\`
+EOF
+    
+    cat > requirements.txt << EOF
+# Add your dependencies here
+EOF
+    
+    cat > src/main.py << EOF
+#!/usr/bin/env python3
+"""
+Main module for $name project.
+"""
+
+def main():
+    print("Hello from $name!")
+
+if __name__ == "__main__":
+    main()
+EOF
+    
+    cat > tests/test_main.py << EOF
+#!/usr/bin/env python3
+"""
+Tests for main module.
+"""
+import unittest
+import sys
+import os
+
+# Add src to path for imports
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'src'))
+
+from main import main
+
+class TestMain(unittest.TestCase):
+    def test_main(self):
+        # Add your tests here
+        pass
+
+if __name__ == '__main__':
+    unittest.main()
+EOF
+    
+    # Create .gitignore
+    cat > .gitignore << EOF
+# Virtual environment
+venv/
+.venv/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment variables
+.env
+.env.local
+EOF
+    
+    # Initialize git
+    git init
+    git add .
+    git commit -m "Initial commit for $name Python project"
+    
+    echo "✅ Python project created at: $project_dir"
+    echo "📂 Virtual environment activated"
+    echo "🚀 Ready to start coding!"
+    echo ""
+    echo "Next steps:"
+    echo "  • Add dependencies to requirements.txt"
+    echo "  • Start coding in src/main.py"
+    echo "  • Run tests with: python -m pytest tests/"
+    echo "  • Open in VSCode: codei ."
+}
+
+# Virtual environment helpers
+venv() {
+    if [[ -f "venv/bin/activate" ]]; then
+        source venv/bin/activate
+        echo "✅ Virtual environment activated"
+    elif [[ -f ".venv/bin/activate" ]]; then
+        source .venv/bin/activate
+        echo "✅ Virtual environment activated"
+    else
+        echo "❌ No virtual environment found (looking for venv/ or .venv/)"
+        echo "Create one with: python3 -m venv venv"
+    fi
+}
+
+# Development shortcuts
+alias py='python3'
+alias pip='pip3'
+alias npm-ls='npm list -g --depth=0'
+alias ports='lsof -i -P -n | grep LISTEN'
+
+# VSCode Insiders integration
+alias codei='code-insiders'
+alias code='code-insiders'  # Default to insiders
+
+# macOS specific
+alias showfiles='defaults write com.apple.finder AppleShowAllFiles YES; killall Finder'
+alias hidefiles='defaults write com.apple.finder AppleShowAllFiles NO; killall Finder'
+alias flushdns='sudo dscacheutil -flushcache'
+
+# Quick navigation
+alias projects='cd $HOME/Projects'
+alias scripts='cd $HOME/Scripts'
+
+# Development environment info
+alias sysinfo='echo "🖥️  System Info:"; sw_vers; echo; echo "💻 Hardware:"; system_profiler SPHardwareDataType | grep -E "(Model|Processor|Memory)"'
+
+# Welcome message
+if [[ -o interactive ]]; then
+    echo "🍎 macOS Development Environment Ready!"
+    echo "Type 'dev-help' for available commands"
+fi
+
+# Load Powerlevel10k instant prompt (should stay at bottom)
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+    source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
